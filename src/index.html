@@ -4,32 +4,82 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fixit</title>
-    <meta name="description" content="Paste an error. Get a fix." />
+    <meta name="description" content="Paste an error. Get a fix. Plain-language explanations and fixes for terminal errors." />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main>
-      <header>
-        <h1>Fixit</h1>
-        <p>Paste an error. Get a fix.</p>
+      <header class="site-header">
+        <div>
+          <h1>Fixit</h1>
+          <p class="pitch">Paste an error. Get a fix.</p>
+        </div>
+        <a class="repo-link" href="https://github.com/von-truber/fixit" rel="noopener">GitHub</a>
       </header>
 
-      <label for="input">Your error message</label>
-      <textarea id="input" rows="10" spellcheck="false" placeholder="ModuleNotFoundError: No module named 'requests'"></textarea>
+      <section class="card input-card" aria-labelledby="input-label">
+        <div class="samples" role="group" aria-label="Try a sample">
+          <span class="samples-label">Try a sample:</span>
+          <div id="sample-buttons" class="sample-buttons"></div>
+        </div>
 
-      <div class="actions">
-        <button id="analyse" type="button" disabled>Analyse</button>
-        <span id="status" role="status"></span>
-      </div>
+        <div class="field">
+          <div class="label-row">
+            <label id="input-label" for="input">Your error message</label>
+            <span id="char-count" class="char-count" aria-live="polite"></span>
+          </div>
+          <textarea id="input" rows="10" spellcheck="false" autocomplete="off"
+            placeholder="Paste an error message, stack trace or command output"></textarea>
+        </div>
 
-      <section id="result" aria-live="polite" hidden>
-        <h2>Result</h2>
-        <pre id="output"></pre>
+        <div class="field-row">
+          <div class="field">
+            <label for="environment">Environment</label>
+            <select id="environment">
+              <option value="auto">Auto-detect</option>
+              <option value="linux">Linux</option>
+              <option value="macos">macOS</option>
+              <option value="windows">Windows</option>
+              <option value="python">Python</option>
+              <option value="node">Node.js</option>
+              <option value="docker">Docker</option>
+              <option value="git">Git</option>
+              <option value="wordpress">WordPress or PHP</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field grow">
+            <label for="context">What were you trying to do? <span class="optional">(optional)</span></label>
+            <input id="context" type="text" maxlength="300" autocomplete="off" placeholder="e.g. Installing a package globally" />
+          </div>
+        </div>
       </section>
 
-      <footer>
-        Suggestions may be wrong; check any command that deletes data or uses sudo before running it.
-        Your text is sent to an AI provider to generate the answer and is not stored by Fixit.
+      <section class="privacy" aria-label="Privacy">
+        <p class="privacy-line">
+          <span class="shield" aria-hidden="true">🛡</span>
+          <span>Secrets removed: <strong id="redact-count">0</strong></span>
+          <span id="redact-kinds" class="redact-kinds"></span>
+        </p>
+        <details id="preview">
+          <summary>Preview what will be sent</summary>
+          <pre id="preview-text" class="preview-text"></pre>
+        </details>
+      </section>
+
+      <div class="actions">
+        <button id="analyse" class="primary" type="button" disabled>
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="button-label">Analyse</span>
+        </button>
+        <p id="status" class="status" role="status"></p>
+      </div>
+
+      <div id="result" class="result" aria-live="polite" aria-busy="false"></div>
+
+      <footer class="site-footer">
+        <p>Suggestions may be wrong. Check any command that deletes data, changes permissions or uses sudo before running it.</p>
+        <p>Your text is sent to an AI provider to generate the answer and is not stored by Fixit.</p>
       </footer>
     </main>
     <script type="module" src="./main.ts"></script>

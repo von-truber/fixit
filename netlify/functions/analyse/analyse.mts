@@ -1,4 +1,5 @@
 import type { Config, Context } from "@netlify/functions";
+import { redact } from "../../../shared/redact.ts";
 import { LIMITS, RequestSchema, ResponseSchemas, type ErrorBody, type Mode } from "../../../shared/schema.ts";
 import { callLLM, LLMTimeoutError, type ChatMessage } from "./llm.ts";
 import { MAX_TOKENS, RETRY_MESSAGE, systemPrompt } from "./prompts.ts";
@@ -47,7 +48,12 @@ export default async (req: Request, _context: Context) => {
     return error(400, { error: "invalid_request", message });
   }
 
-  const request = parsed.data;
+  // Second redaction pass: the page already redacts, this catches anything that skipped it.
+  const request = {
+    ...parsed.data,
+    input: redact(parsed.data.input).text,
+    context: parsed.data.context === undefined ? undefined : redact(parsed.data.context).text,
+  };
   const inputLength = request.input.length;
   const serverCap = Number(env("MAX_INPUT_CHARS")) || LIMITS.digest;
   const limit = Math.min(LIMITS[request.mode], serverCap);
