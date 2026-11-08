@@ -8,6 +8,8 @@ Fixit turns terminal errors and log files into plain-language explanations and s
 
 ![Fixit's terminal-style page explaining an npm permission error as a quest: two of four fix steps ticked off, and a HAZARD badge on the sudo step](docs/screenshot.png)
 
+**Full breakdown:** [docs/OVERVIEW.md](docs/OVERVIEW.md) covers how it works, which files to look at, who it's for and why.
+
 Built for the hackathon theme **Simplify the Everyday**: everyone who uses a computer hits error messages written for machines. Fixit translates them for humans.
 
 ## What it does
