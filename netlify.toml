@@ -1,0 +1,22 @@
+[build]
+  command = "npm run build"
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Local dev: `npx netlify dev` runs Vite and the function together on localhost:8888
+[dev]
+  framework = "#custom"
+  command = "npm run vite"
+  targetPort = 5173
+  port = 8888
+  publish = "public"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; style-src 'self' 'unsafe-inline'"

@@ -1,0 +1,6 @@
+node_modules/
+public/
+.env
+.netlify/
+*.log
+!tests/fixtures/*.log

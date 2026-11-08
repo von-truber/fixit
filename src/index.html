@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fixit</title>
+    <meta name="description" content="Paste an error. Get a fix." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Fixit</h1>
+        <p>Paste an error. Get a fix.</p>
+      </header>
+
+      <label for="input">Your error message</label>
+      <textarea id="input" rows="10" spellcheck="false" placeholder="ModuleNotFoundError: No module named 'requests'"></textarea>
+
+      <div class="actions">
+        <button id="analyse" type="button" disabled>Analyse</button>
+        <span id="status" role="status"></span>
+      </div>
+
+      <section id="result" aria-live="polite" hidden>
+        <h2>Result</h2>
+        <pre id="output"></pre>
+      </section>
+
+      <footer>
+        Suggestions may be wrong; check any command that deletes data or uses sudo before running it.
+        Your text is sent to an AI provider to generate the answer and is not stored by Fixit.
+      </footer>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
