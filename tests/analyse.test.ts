@@ -10,13 +10,24 @@ vi.mock("../netlify/functions/analyse/llm.ts", () => ({
 const { default: handler } = await import("../netlify/functions/analyse/analyse.mts");
 
 const VALID_REPLY = JSON.stringify({
-  summary: "s",
-  meaning: "m",
+  summary: "This is not an error message.",
+  meaning: "The text does not describe a failure.",
   causes: [],
   fix_steps: [],
-  verify: "v",
+  verify: "Paste the full error text.",
   confidence: "low",
   detected_environment: "auto",
+});
+
+// Valid against the schema but useless: what the AI Gateway sometimes returned.
+const EMPTY_SHELL = JSON.stringify({
+  summary: "",
+  meaning: "",
+  causes: [],
+  fix_steps: [],
+  verify: "",
+  confidence: "high",
+  detected_environment: "python",
 });
 
 function post(body: unknown) {
@@ -36,7 +47,7 @@ beforeEach(() => {
 describe("analyse function", () => {
   it("redacts again on the server, so secrets never reach the LLM or the log (S1)", async () => {
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
-    callLLM.mockResolvedValue(VALID_REPLY);
+    callLLM.mockResolvedValue({ text: VALID_REPLY, model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 });
 
     const res = await post({
       mode: "explain",
@@ -56,15 +67,25 @@ describe("analyse function", () => {
 
   it("retries once when the reply is not valid JSON, then succeeds", async () => {
     vi.spyOn(console, "log").mockImplementation(() => {});
-    callLLM.mockResolvedValueOnce("not json").mockResolvedValueOnce(VALID_REPLY);
+    callLLM.mockResolvedValueOnce({ text: "not json", model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 }).mockResolvedValueOnce({ text: VALID_REPLY, model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 });
     const res = await post({ mode: "explain", input: "Error: boom" });
     expect(res.status).toBe(200);
     expect(callLLM).toHaveBeenCalledTimes(2);
   });
 
+  it("retries once when the reply is valid JSON but empty, and says why", async () => {
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    callLLM.mockResolvedValueOnce({ text: EMPTY_SHELL, model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 }).mockResolvedValueOnce({ text: VALID_REPLY, model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 });
+    const res = await post({ mode: "explain", input: "Error: boom" });
+    expect(res.status).toBe(200);
+    expect(callLLM).toHaveBeenCalledTimes(2);
+    const retryMessages = callLLM.mock.calls[1][0].messages;
+    expect(retryMessages.at(-1).content).toContain("incomplete (summary or meaning is empty)");
+  });
+
   it("returns 502 after two invalid replies", async () => {
     vi.spyOn(console, "log").mockImplementation(() => {});
-    callLLM.mockResolvedValue("{}");
+    callLLM.mockResolvedValue({ text: "{}", model: "m", stopReason: "end_turn", blocks: "text", outputTokens: 10 });
     const res = await post({ mode: "explain", input: "Error: boom" });
     expect(res.status).toBe(502);
     expect(await res.json()).toEqual({ error: "upstream_failed" });
@@ -75,5 +96,28 @@ describe("analyse function", () => {
     const res = await post({ mode: "explain", input: "x".repeat(8001) });
     expect(res.status).toBe(413);
     expect(callLLM).not.toHaveBeenCalled();
+  });
+});
+
+describe("normalizeReply", () => {
+  it("accepts case and spelling variants of enum values", async () => {
+    const { normalizeReply } = await import("../netlify/functions/analyse/analyse.mts");
+    const raw = {
+      verdict: "Errors",
+      confidence: "High",
+      issues: [{ title: "t", severity: "CRITICAL", count: "3", sample: "s" }],
+    };
+    expect(normalizeReply(raw)).toEqual({
+      verdict: "errors",
+      confidence: "high",
+      issues: [{ title: "t", severity: "error", count: 3, first_seen: null, sample: "s" }],
+    });
+  });
+
+  it("turns an empty command into null and coerces dangerous to a boolean", async () => {
+    const { normalizeReply } = await import("../netlify/functions/analyse/analyse.mts");
+    expect(normalizeReply({ fix_steps: [{ step: "x", command: "" }] })).toEqual({
+      fix_steps: [{ step: "x", command: null, dangerous: false }],
+    });
   });
 });

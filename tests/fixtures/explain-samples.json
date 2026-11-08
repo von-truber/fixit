@@ -1,0 +1,60 @@
+[
+  {
+    "id": "E1",
+    "label": "Python: missing module",
+    "input": "Traceback (most recent call last):\n  File \"main.py\", line 1, in <module>\n    import requests\nModuleNotFoundError: No module named 'requests'",
+    "environment": "python",
+    "context": "Running my script after cloning a repo",
+    "featured": true,
+    "expected": "Install the package; check the virtual environment; confidence high"
+  },
+  {
+    "id": "E2",
+    "label": "npm: permission denied",
+    "input": "npm ERR! code EACCES\nnpm ERR! syscall mkdir\nnpm ERR! path /usr/local/lib/node_modules\nnpm ERR! errno -13\nnpm ERR! Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules'",
+    "environment": "node",
+    "context": "npm install -g typescript",
+    "featured": true,
+    "expected": "Explains global install permissions; any sudo step flagged dangerous"
+  },
+  {
+    "id": "E5",
+    "label": "Docker: port in use",
+    "input": "docker: Error response from daemon: driver failed programming external connectivity on endpoint web (3f2a): Bind for 0.0.0.0:8080 failed: port is already allocated.",
+    "environment": "docker",
+    "featured": true,
+    "expected": "Find and stop the process using the port, or map another port"
+  },
+  {
+    "id": "S1",
+    "label": "Error with secrets",
+    "input": "psycopg2.OperationalError: connection to server failed: FATAL: password authentication failed for user \"jane@company.com\"\nDATABASE_URL=postgres://jane:hunter2@db.internal:5432/app\nANTHROPIC_API_KEY=sk-ant-test123-FAKE-demo-key\npassword=abc",
+    "environment": "python",
+    "featured": true,
+    "expected": "Counter shows the removed secrets; none reach the function"
+  },
+  {
+    "id": "E3",
+    "label": "Git: unrelated histories",
+    "input": "fatal: refusing to merge unrelated histories",
+    "environment": "git",
+    "featured": false,
+    "expected": "Explains Git histories; mentions --allow-unrelated-histories with care"
+  },
+  {
+    "id": "E4",
+    "label": "WordPress: database connection",
+    "input": "Error establishing a database connection",
+    "environment": "wordpress",
+    "featured": false,
+    "expected": "Checks wp-config.php credentials and database service status"
+  },
+  {
+    "id": "E6",
+    "label": "Not an error",
+    "input": "Hello, how are you?",
+    "environment": "auto",
+    "featured": false,
+    "expected": "Says this is not an error; confidence low"
+  }
+]

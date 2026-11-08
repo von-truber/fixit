@@ -5,101 +5,146 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fixit</title>
     <meta name="description" content="Paste an error. Get a fix. Plain-language explanations and fixes for terminal errors and log files." />
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3ecdc" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main>
-      <header class="site-header">
-        <div>
-          <h1>Fixit</h1>
-          <p class="pitch">Paste an error. Get a fix.</p>
-        </div>
-        <a class="repo-link" href="https://github.com/von-truber/fixit" rel="noopener">GitHub</a>
-      </header>
+    <a class="skip-link" href="#input">Skip to the input</a>
 
-      <div class="tabs" role="tablist" aria-label="Mode">
-        <button id="tab-explain" class="tab" role="tab" type="button" aria-selected="true" aria-controls="panel" data-mode="explain">Explain Error</button>
-        <button id="tab-digest" class="tab" role="tab" type="button" aria-selected="false" aria-controls="panel" data-mode="digest" tabindex="-1">Log Digest</button>
+    <div class="window">
+      <div class="titlebar" aria-hidden="true">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="titlebar-text">fixit — ~/errors — 80×24</span>
+        <span class="titlebar-spacer"></span>
       </div>
 
-      <div id="panel" role="tabpanel" aria-labelledby="tab-explain">
-        <section class="card input-card" id="input-card">
-          <div class="samples" role="group" aria-label="Try a sample">
-            <span class="samples-label">Try a sample:</span>
-            <div id="sample-buttons" class="sample-buttons"></div>
+      <main class="screen">
+        <header class="site-header">
+          <div class="brand">
+            <h1 class="logo"><span class="logo-prompt" aria-hidden="true">&gt;_</span>FIXIT</h1>
+            <p class="pitch"><span class="prompt" aria-hidden="true">$</span> paste an error. get a fix.<span class="cursor" aria-hidden="true"></span></p>
           </div>
+          <a class="repo-link" href="https://github.com/von-truber/fixit" rel="noopener">[ github ]</a>
+        </header>
 
-          <div class="field">
-            <div class="label-row">
-              <label id="input-label" for="input">Your error message</label>
-              <span id="char-count" class="char-count" aria-live="polite"></span>
+        <section class="hud" aria-label="Your progress">
+          <div class="hud-player">
+            <span class="hud-level" id="hud-level">LV 1</span>
+            <span class="hud-title" id="hud-title">Newbie</span>
+          </div>
+          <div class="hud-xp">
+            <div class="xp-bar" id="xp-bar" role="progressbar" aria-label="Experience to next level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span class="xp-fill" id="xp-fill"></span>
             </div>
-            <textarea id="input" rows="10" spellcheck="false" autocomplete="off"></textarea>
+            <span class="xp-text" id="xp-text">0 / 100 XP</span>
           </div>
-
-          <div id="drop-zone" class="drop-zone" hidden>
-            <p>
-              <span aria-hidden="true">📄</span>
-              Drop a <code>.log</code> or <code>.txt</code> file here (up to 1 MB), or
-              <label class="file-label" for="file-input">choose a file</label>
-              <input id="file-input" type="file" accept=".log,.txt,text/plain" class="visually-hidden" />
-            </p>
-            <p id="file-name" class="file-name"></p>
-          </div>
-
-          <div id="explain-fields" class="field-row">
-            <div class="field">
-              <label for="environment">Environment</label>
-              <select id="environment">
-                <option value="auto">Auto-detect</option>
-                <option value="linux">Linux</option>
-                <option value="macos">macOS</option>
-                <option value="windows">Windows</option>
-                <option value="python">Python</option>
-                <option value="node">Node.js</option>
-                <option value="docker">Docker</option>
-                <option value="git">Git</option>
-                <option value="wordpress">WordPress or PHP</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div class="field grow">
-              <label for="context">What were you trying to do? <span class="optional">(optional)</span></label>
-              <input id="context" type="text" maxlength="300" autocomplete="off" placeholder="e.g. Installing a package globally" />
-            </div>
-          </div>
-        </section>
-
-        <section class="privacy" aria-label="Privacy">
-          <p class="privacy-line">
-            <span class="shield" aria-hidden="true">🛡</span>
-            <span>Secrets removed: <strong id="redact-count">0</strong></span>
-            <span id="redact-kinds" class="redact-kinds"></span>
-          </p>
-          <p id="trim-line" class="trim-line" hidden></p>
-          <details id="preview">
-            <summary>Preview what will be sent</summary>
-            <pre id="preview-text" class="preview-text"></pre>
+          <dl class="hud-stats">
+            <div><dt>bugs squashed</dt><dd id="stat-fixes">0</dd></div>
+            <div><dt>secrets caught</dt><dd id="stat-secrets">0</dd></div>
+            <div><dt>logs read</dt><dd id="stat-logs">0</dd></div>
+          </dl>
+          <details class="achievements">
+            <summary>achievements <span id="ach-count">0/6</span></summary>
+            <ul id="ach-list" class="ach-list"></ul>
+            <button id="reset-progress" class="link-button" type="button">reset progress</button>
           </details>
         </section>
 
-        <div class="actions">
-          <button id="analyse" class="primary" type="button" disabled>
-            <span class="spinner" aria-hidden="true"></span>
-            <span class="button-label">Analyse</span>
+        <div class="tabs" role="tablist" aria-label="Mode">
+          <button id="tab-explain" class="tab" role="tab" type="button" aria-selected="true" aria-controls="panel" data-mode="explain">
+            <span class="tab-cmd" aria-hidden="true">fixit</span> explain<span class="visually-hidden"> an error</span>
           </button>
-          <p id="status" class="status" role="status"></p>
+          <button id="tab-digest" class="tab" role="tab" type="button" aria-selected="false" aria-controls="panel" data-mode="digest" tabindex="-1">
+            <span class="tab-cmd" aria-hidden="true">fixit</span> logs<span class="visually-hidden">: digest a log file</span>
+          </button>
         </div>
 
-        <div id="result-explain" class="result" aria-live="polite" aria-busy="false"></div>
-        <div id="result-digest" class="result" aria-live="polite" aria-busy="false" hidden></div>
-      </div>
+        <div id="panel" role="tabpanel" aria-labelledby="tab-explain">
+          <section class="input-card" id="input-card">
+            <div class="samples" role="group" aria-label="Try a sample">
+              <span class="samples-label">quick quests:</span>
+              <div id="sample-buttons" class="sample-buttons"></div>
+            </div>
 
-      <footer class="site-footer">
-        <p>Suggestions may be wrong. Check any command that deletes data, changes permissions or uses sudo before running it.</p>
-        <p>Your text is sent to an AI provider to generate the answer and is not stored by Fixit.</p>
-      </footer>
-    </main>
+            <div class="field">
+              <div class="label-row">
+                <label id="input-label" for="input">stdin ← your error message</label>
+                <span id="char-count" class="char-count" aria-live="polite"></span>
+              </div>
+              <div class="terminal-input">
+                <span class="gutter" aria-hidden="true">$</span>
+                <textarea id="input" rows="9" spellcheck="false" autocomplete="off"></textarea>
+              </div>
+            </div>
+
+            <div id="drop-zone" class="drop-zone" hidden>
+              <p>
+                <span aria-hidden="true">⇩</span>
+                drop a <code>.log</code> or <code>.txt</code> file here (max 1 MB) or
+                <label class="file-label">browse<input id="file-input" type="file" accept=".log,.txt,text/plain" class="visually-hidden" /></label>
+              </p>
+              <p id="file-name" class="file-name"></p>
+            </div>
+
+            <div id="explain-fields" class="flags">
+              <div class="flag">
+                <label for="environment"><span class="flag-name">--env</span></label>
+                <select id="environment">
+                  <option value="auto">auto-detect</option>
+                  <option value="linux">linux</option>
+                  <option value="macos">macos</option>
+                  <option value="windows">windows</option>
+                  <option value="python">python</option>
+                  <option value="node">node.js</option>
+                  <option value="docker">docker</option>
+                  <option value="git">git</option>
+                  <option value="wordpress">wordpress / php</option>
+                  <option value="other">other</option>
+                </select>
+              </div>
+              <div class="flag grow">
+                <label for="context"><span class="flag-name">--context</span> <span class="optional">what were you trying to do? (optional)</span></label>
+                <input id="context" type="text" maxlength="300" autocomplete="off" placeholder="installing a package globally" />
+              </div>
+            </div>
+          </section>
+
+          <section class="privacy" aria-label="Privacy">
+            <p class="privacy-line">
+              <span class="shield" aria-hidden="true">[✔]</span>
+              <span>redact: <strong id="redact-count">0</strong> secrets caught</span>
+              <span id="redact-kinds" class="redact-kinds"></span>
+            </p>
+            <p id="trim-line" class="trim-line" hidden></p>
+            <details id="preview">
+              <summary>cat payload.txt <span class="muted">— preview what will be sent</span></summary>
+              <pre id="preview-text" class="preview-text"></pre>
+            </details>
+          </section>
+
+          <div class="actions">
+            <button id="analyse" class="run-button" type="button" disabled>
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="button-label">▶ RUN</span>
+            </button>
+            <span class="hint" aria-hidden="true">ctrl + enter</span>
+            <p id="status" class="status" role="status"></p>
+          </div>
+
+          <div id="result-explain" class="result" aria-live="polite" aria-busy="false"></div>
+          <div id="result-digest" class="result" aria-live="polite" aria-busy="false" hidden></div>
+        </div>
+
+        <footer class="site-footer">
+          <p>// suggestions may be wrong. read any command before you run it, especially ones marked HAZARD.</p>
+          <p>// your text is sent to an AI provider to generate the answer and is not stored by fixit.</p>
+        </footer>
+      </main>
+    </div>
+
+    <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

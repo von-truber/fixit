@@ -1,6 +1,10 @@
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-700.css";
+import "@fontsource/press-start-2p/latin-400.css";
 import { LIMITS } from "../shared/limits.ts";
 import { redact, type RedactionKind } from "../shared/redact.ts";
 import type { DigestResponse, ExplainResponse, Mode } from "../shared/schema.ts";
+import { addXp, bump, renderHud, resetProgress, unlock } from "./game.ts";
 import { copyText, digestToMarkdown, el, explainToMarkdown, renderDigest, renderExplain, type DigestIssue } from "./render.ts";
 import { DIGEST_SAMPLES, EXPLAIN_SAMPLES } from "./samples.ts";
 import { trimLog } from "./trimLog.ts";
@@ -62,16 +66,18 @@ const KIND_PLURALS: Record<RedactionKind, string> = {
 
 const MODE_TEXT = {
   explain: {
-    label: "Your error message",
-    placeholder: "Paste an error message, stack trace or command output",
-    loading: "Reading your error...",
+    label: "stdin ← your error message",
+    placeholder: "paste an error message, stack trace or command output",
+    loading: ["reading your error", "parsing stack trace", "consulting the docs", "writing your fix"],
   },
   digest: {
-    label: "Your log",
-    placeholder: "Paste a log, or drop a .log or .txt file below",
-    loading: "Reading your log...",
+    label: "stdin ← your log",
+    placeholder: "paste a log here, or drop a .log / .txt file below",
+    loading: ["reading your log", "grouping repeats", "tracking down the boss", "writing the report"],
   },
 } as const;
+
+const SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 let mode: Mode = "explain";
 let busy = false;
@@ -156,10 +162,10 @@ function refresh() {
     const parts = [`${t.originalLines.toLocaleString()} lines → ${t.outputLines.toLocaleString()} sent`];
     if (t.collapsedLines) parts.push(`${t.collapsedLines.toLocaleString()} repeats collapsed`);
     if (t.trimmed) parts.push(`${t.omittedLines.toLocaleString()} quieter lines left out to fit`);
-    trimLine.textContent = `Log trimmed: ${parts.join(", ")}.`;
+    trimLine.textContent = `[≋] trim: ${parts.join(", ")}`;
   }
 
-  previewText.textContent = p.input || "Nothing to send yet.";
+  previewText.textContent = p.input || "(empty) nothing to send yet";
 
   analyseButton.disabled = busy || p.input.trim().length === 0 || Boolean(p.tooLong);
   if (busy) return;
@@ -175,12 +181,29 @@ function scheduleRefresh() {
   else refreshTimer = window.setTimeout(refresh, 150);
 }
 
+let loadingTimer = 0;
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function setBusy(value: boolean) {
   busy = value;
   analyseButton.classList.toggle("loading", value);
-  buttonLabel.textContent = value ? MODE_TEXT[mode].loading : "Analyse";
   results[mode].setAttribute("aria-busy", String(value));
   for (const tab of tabs) tab.disabled = value;
+  clearInterval(loadingTimer);
+  if (value) {
+    // Terminal-style spinner with rotating messages; the text alone carries the meaning.
+    const messages = MODE_TEXT[mode].loading;
+    let tick = 0;
+    const draw = () => {
+      const frame = reducedMotion ? "…" : SPINNER[tick % SPINNER.length];
+      buttonLabel.textContent = `${frame} ${messages[Math.floor(tick / 12) % messages.length]}...`;
+      tick++;
+    };
+    draw();
+    loadingTimer = window.setInterval(draw, 90);
+  } else {
+    buttonLabel.textContent = "▶ RUN";
+  }
   refresh();
 }
 
@@ -218,6 +241,7 @@ async function analyse() {
     }
     if (requestMode === "explain") showExplain(body as ExplainResponse);
     else showDigest(body as DigestResponse);
+    reward(requestMode, p.count);
   } catch {
     setStatus("Couldn't reach Fixit. Check your connection.", "error", true);
   } finally {
@@ -225,16 +249,54 @@ async function analyse() {
   }
 }
 
+/** XP and achievements for a successful analysis. */
+function reward(requestMode: Mode, secrets: number) {
+  unlock("hello_world");
+  if (requestMode === "explain") addXp(20, "diagnosis");
+  else {
+    addXp(30, "log digested");
+    bump("logs");
+    unlock("log_diver");
+  }
+  if (secrets > 0) {
+    bump("secrets", secrets);
+    setTimeout(() => addXp(Math.min(25, secrets * 5), `${secrets} secret${secrets > 1 ? "s" : ""} caught`), 350);
+    unlock("secret_keeper");
+  }
+}
+
 function showCard(target: Mode, card: HTMLElement, markdown: string) {
-  const copyAll = el("button", { type: "button", class: "secondary" }, "Copy as Markdown");
+  const copyAll = el("button", { type: "button", class: "secondary" }, "copy as markdown");
   copyAll.addEventListener("click", () => copyText(markdown, copyAll));
-  card.querySelector(".result-header")!.append(copyAll);
+  card.querySelector(".result-meta")!.append(copyAll);
   results[target].replaceChildren(card);
+  // Move focus to the answer so keyboard and screen-reader users land on it.
+  const title = card.querySelector<HTMLElement>("#result-title");
+  title?.setAttribute("tabindex", "-1");
+  title?.focus({ preventScroll: true });
   card.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function showExplain(data: ExplainResponse) {
-  showCard("explain", renderExplain(data), explainToMarkdown(data));
+  // Each step pays out once, and finishing the whole quest pays a bonus once.
+  const paid = new Set<object>();
+  let squashed = false;
+  const card = renderExplain(data, {
+    onStep(step, checked, done, total) {
+      if (checked && !paid.has(step)) {
+        paid.add(step);
+        addXp(5, "step done");
+        if (step.dangerous) unlock("rtfm");
+      }
+      if (done === total && !squashed) {
+        squashed = true;
+        bump("fixes");
+        setTimeout(() => addXp(25, "BUG SQUASHED"), 300);
+        unlock("exterminator");
+      }
+    },
+  });
+  showCard("explain", card, explainToMarkdown(data));
 }
 
 function showDigest(data: DigestResponse) {
@@ -243,6 +305,7 @@ function showDigest(data: DigestResponse) {
 
 /** "Explain this": send one digest issue to Explain Error and run it. */
 function explainIssue(issue: DigestIssue) {
+  unlock("boss_hunter");
   setMode("explain");
   input.value = issue.sample;
   environment.value = "auto";
@@ -257,7 +320,7 @@ function renderSamples() {
   sampleButtons.replaceChildren();
   if (mode === "explain") {
     for (const sample of EXPLAIN_SAMPLES.filter((s) => s.featured)) {
-      const button = el("button", { type: "button", class: "chip" }, sample.label);
+      const button = el("button", { type: "button", class: "chip" }, el("span", { "aria-hidden": "true" }, "> "), sample.label.toLowerCase());
       button.addEventListener("click", () => {
         input.value = sample.input;
         environment.value = sample.environment;
@@ -269,10 +332,10 @@ function renderSamples() {
     }
   } else {
     for (const sample of DIGEST_SAMPLES) {
-      const button = el("button", { type: "button", class: "chip" }, sample.label);
+      const button = el("button", { type: "button", class: "chip" }, el("span", { "aria-hidden": "true" }, "> "), sample.label.toLowerCase());
       button.addEventListener("click", () => {
         input.value = sample.input;
-        fileName.textContent = `Loaded sample: ${sample.fileName}`;
+        fileName.textContent = `loaded sample: ${sample.fileName}`;
         refresh();
         input.focus();
       });
@@ -316,7 +379,7 @@ async function loadFile(file: File) {
     return;
   }
   input.value = await file.text();
-  fileName.textContent = `Loaded ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+  fileName.textContent = `loaded ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
   setStatus("");
   refresh();
 }
@@ -366,5 +429,10 @@ input.addEventListener("keydown", (e) => {
 });
 
 input.placeholder = MODE_TEXT.explain.placeholder;
+inputLabel.textContent = MODE_TEXT.explain.label;
+document.getElementById("reset-progress")!.addEventListener("click", () => {
+  if (window.confirm("Reset your XP, stats and achievements?")) resetProgress();
+});
+renderHud();
 renderSamples();
 refresh();
