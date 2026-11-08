@@ -58,6 +58,35 @@ function normalizeEnum(field: keyof typeof ENUM_SYNONYMS, value: unknown) {
   return ENUM_SYNONYMS[field][value.trim().toLowerCase()] ?? value;
 }
 
+/**
+ * Commands that delete data, change permissions, need admin rights, force-push or
+ * edit system files. A safety net: these are flagged even when the model forgets.
+ */
+const RISKY_COMMAND = new RegExp(
+  [
+    String.raw`\b(?:sudo|doas|runas)\b`,
+    String.raw`(?:^|[\s;&|(])(?:rm|rmdir|del|erase|rd|shred|unlink)\s`,
+    String.raw`\bRemove-Item\b`,
+    String.raw`\b(?:mkfs|fdisk|diskpart|format\s+[a-z]:)`,
+    String.raw`\bdd\s+if=`,
+    String.raw`\b(?:chmod|chown|chgrp|icacls|takeown|setfacl|cacls)\b`,
+    String.raw`\bgit\s+push\b.*(?:--force|\s-f\b|\s\+)`,
+    String.raw`\bgit\s+(?:reset\s+--hard|clean\s+-\w*f|branch\s+-D|checkout\s+--\s|stash\s+(?:drop|clear))`,
+    String.raw`\bdocker\s+(?:rm|rmi|system\s+prune|volume\s+(?:rm|prune)|image\s+prune|container\s+prune)\b`,
+    String.raw`\bkubectl\s+delete\b`,
+    String.raw`\b(?:DROP\s+(?:TABLE|DATABASE|SCHEMA)|TRUNCATE\s+TABLE|DELETE\s+FROM)\b`,
+    String.raw`\b(?:kill\s+-9|killall|pkill|taskkill\s+.*\/f)\b`,
+    String.raw`\b(?:curl|wget|iwr|Invoke-WebRequest)\b[^|]*\|\s*(?:sudo\s+)?(?:ba|z)?sh\b`,
+    String.raw`(?:>|\btee\s+(?:-a\s+)?)\s*\/(?:etc|usr|boot|sys)\/`,
+    String.raw`\b(?:reg\s+(?:add|delete)|Set-ExecutionPolicy|sfc\s+\/scannow|bcdedit|systemctl\s+(?:disable|mask))\b`,
+  ].join("|"),
+  "i",
+);
+
+export function isRiskyCommand(command: unknown): boolean {
+  return typeof command === "string" && RISKY_COMMAND.test(command);
+}
+
 /** Accept harmless variations ("High", "warn", a missing first_seen) before strict validation. */
 export function normalizeReply(raw: unknown): unknown {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return raw;
@@ -82,7 +111,9 @@ export function normalizeReply(raw: unknown): unknown {
         ? {
             ...step,
             command: (step as Record<string, unknown>).command || null,
-            dangerous: Boolean((step as Record<string, unknown>).dangerous),
+            dangerous:
+              Boolean((step as Record<string, unknown>).dangerous) ||
+              isRiskyCommand((step as Record<string, unknown>).command),
           }
         : step,
     );

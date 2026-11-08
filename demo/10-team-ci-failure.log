@@ -1,0 +1,31 @@
+2026-11-08T16:02:09.000Z ##[group]Run actions/checkout@v4
+2026-11-08T16:02:09.000Z Syncing repository: acme/webapp
+2026-11-08T16:02:09.000Z ##[endgroup]
+2026-11-08T16:02:12.000Z ##[group]Run actions/setup-node@v4
+2026-11-08T16:02:12.000Z Found in cache @ /opt/hostedtoolcache/node/20.18.1/x64
+2026-11-08T16:02:12.000Z ##[endgroup]
+2026-11-08T16:02:14.000Z ##[group]Run npm ci
+2026-11-08T16:02:14.000Z npm ci
+2026-11-08T16:02:18.000Z npm error code EUSAGE
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error Invalid: lock file's zod@3.23.8 does not satisfy zod@4.1.0
+2026-11-08T16:02:18.000Z npm error Missing: @fontsource/jetbrains-mono@5.2.5 from lock file
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error Clean install a project
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error Usage:
+2026-11-08T16:02:18.000Z npm error npm ci
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error Options:
+2026-11-08T16:02:18.000Z npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
+2026-11-08T16:02:18.000Z npm error
+2026-11-08T16:02:18.000Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2026-11-08T16_02_18_204Z-debug-0.log
+2026-11-08T16:02:18.000Z ##[error]Process completed with exit code 1.
+2026-11-08T16:02:18.000Z ##[endgroup]
+2026-11-08T16:02:19.000Z ##[group]Run npm test
+2026-11-08T16:02:19.000Z ##[warning]Skipping step: previous step failed
+2026-11-08T16:02:19.000Z ##[endgroup]
+2026-11-08T16:02:19.000Z Post job cleanup.
+2026-11-08T16:02:19.000Z ##[error]The job 'build-and-test' failed. Pull request #142 'Add font packages' cannot be merged until checks pass.

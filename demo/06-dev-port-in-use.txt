@@ -1,0 +1,26 @@
+$ npm run dev
+
+> webapp@1.4.0 dev
+> node server.js
+
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:1904:16)
+    at listenInCluster (node:net:1961:12)
+    at Server.listen (node:net:2066:7)
+    at Object.<anonymous> (/Users/sam/code/webapp/server.js:14:8)
+    at Module._compile (node:internal/modules/cjs/loader:1554:14)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1940:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v22.14.0

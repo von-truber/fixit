@@ -1,0 +1,7 @@
+PS C:\Users\Maya\Documents\python> python age.py
+How old are you? 19
+Traceback (most recent call last):
+  File "C:\Users\Maya\Documents\python\age.py", line 2, in <module>
+    print("Next year you will be " + age + 1)
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+TypeError: can only concatenate str (not "int") to str

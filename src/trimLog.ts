@@ -37,6 +37,9 @@ export function signature(line: string): string {
   return line
     .replace(TIMESTAMP, "")
     .replace(/"[^"]*"/g, '"…"')
+    // Unquoted paths and routes (/invoices/:id, /app/x.js:45:11) vary per line too.
+    .replace(/(?<![\w/])\/[^\s"'),\]]+/g, "/…")
+    .replace(/\b(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b/g, "METHOD")
     .replace(/0x[0-9a-f]+/gi, "#")
     .replace(/\b[0-9a-f]{8,}\b/gi, "#")
     .replace(/\d+/g, "#")
@@ -44,10 +47,22 @@ export function signature(line: string): string {
     .trim();
 }
 
+/** The parts that `signature` hides (methods, routes, quoted values), digits normalised. */
+function variantOf(line: string): string {
+  const parts = line
+    .replace(TIMESTAMP, "")
+    .match(/\b(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+\/[^\s"'),\]]*|"[^"]*"|(?<![\w/])\/[^\s"'),\]]+/g);
+  return (parts ?? []).map((p) => p.replace(/\d+/g, "#")).join(" ");
+}
+
+const MAX_VARIANTS = 50;
+const SHOWN_VARIANTS = 4;
+
 interface Group {
   first: string;
   count: number;
   lastTimestamp: string | null;
+  variants: Set<string>;
 }
 
 export function collapseDuplicates(lines: string[]): { lines: string[]; collapsed: number } {
@@ -64,8 +79,9 @@ export function collapseDuplicates(lines: string[]): { lines: string[]; collapse
     if (group) {
       group.count++;
       group.lastTimestamp = timestampOf(line) ?? group.lastTimestamp;
+      if (group.variants.size < MAX_VARIANTS) group.variants.add(variantOf(line));
     } else {
-      const g: Group = { first: line, count: 1, lastTimestamp: null };
+      const g: Group = { first: line, count: 1, lastTimestamp: null, variants: new Set([variantOf(line)]) };
       groups.set(sig, g);
       order.push(g);
     }
@@ -77,7 +93,14 @@ export function collapseDuplicates(lines: string[]): { lines: string[]; collapse
     if (item.count === 1) return item.first;
     collapsed += item.count - 1;
     const last = item.lastTimestamp ? `, last at ${item.lastTimestamp}` : "";
-    return `${item.first}  [${item.count} occurrences in total including this one${last}]`;
+    // Say when the folded lines hit different routes or values, so the model
+    // does not describe them all by the first line's route.
+    const kinds = [...item.variants].filter(Boolean);
+    const across =
+      kinds.length > 1
+        ? `, across ${kinds.length >= MAX_VARIANTS ? `${MAX_VARIANTS}+` : kinds.length} variants such as ${kinds.slice(0, SHOWN_VARIANTS).join(" | ")}`
+        : "";
+    return `${item.first}  [${item.count} occurrences in total including this one${across}${last}]`;
   });
   return { lines: out, collapsed };
 }

@@ -4,3 +4,4 @@ node_modules/
 .netlify/
 *.log
 !tests/fixtures/*.log
+!demo/*.log

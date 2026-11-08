@@ -116,7 +116,7 @@ In order of what matters most.
 | [`src/game.ts`](../src/game.ts) | XP, levels, achievements | Self-contained; works without storage (e.g. in private windows). |
 | [`src/styles.css`](../src/styles.css) | Look and feel | Two themes driven by CSS variables (phosphor terminal and paper terminal), a phone layout, reduced-motion support. |
 | [`netlify.toml`](../netlify.toml) | Build and headers | Strict Content-Security-Policy (only the site's own files), no framing, permissions locked down. |
-| [`tests/`](../tests) and [`scripts/smoke.mts`](../scripts/smoke.mts) | Tests | 48 unit tests, plus a live script that runs all the sample errors and logs and reports timings. |
+| [`tests/`](../tests) and [`scripts/smoke.mts`](../scripts/smoke.mts) | Tests | 81 unit tests, plus a live script that runs all the sample errors and logs and reports timings. |
 
 ---
 

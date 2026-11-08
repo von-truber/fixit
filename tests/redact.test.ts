@@ -58,6 +58,7 @@ describe("redact: leaves ordinary error text alone", () => {
     "at Object.<anonymous> (/usr/local/lib/node_modules/some_package/dist/index.js:12:5)",
     "/home/[USER]/app",
     'upstream: "http://127.0.0.1:3000/api", listen 0.0.0.0:8080, bind [::1]:5432',
+    "Error: listen EADDRINUSE: address already in use :::3000",
   ])("%s", (input) => {
     const result = redact(input);
     expect(result.text).toBe(input);

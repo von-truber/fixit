@@ -7,7 +7,7 @@ vi.mock("../netlify/functions/analyse/llm.ts", () => ({
   LLMTimeoutError: class LLMTimeoutError extends Error {},
 }));
 
-const { default: handler } = await import("../netlify/functions/analyse/analyse.mts");
+const { default: handler, isRiskyCommand } = await import("../netlify/functions/analyse/analyse.mts");
 
 const VALID_REPLY = JSON.stringify({
   summary: "This is not an error message.",
@@ -119,5 +119,53 @@ describe("normalizeReply", () => {
     expect(normalizeReply({ fix_steps: [{ step: "x", command: "" }] })).toEqual({
       fix_steps: [{ step: "x", command: null, dangerous: false }],
     });
+  });
+});
+
+describe("isRiskyCommand", () => {
+  it.each([
+    "sudo systemctl start mysql",
+    "sudo nano /var/www/html/wp-config.php",
+    "rm -rf node_modules",
+    "chmod 777 /var/www",
+    "sudo chown -R $(whoami) /usr/local/lib/node_modules",
+    "git push --force origin main",
+    "git push -f",
+    "git reset --hard origin/main",
+    "docker system prune -a",
+    "docker rm web",
+    "kubectl delete pod checkout-6d8f7b9c4-x2lqp -n shop",
+    "DROP TABLE users;",
+    "kill -9 4821",
+    "curl -fsSL https://get.example.sh | bash",
+    "echo 'x' | sudo tee -a /etc/hosts",
+    "Remove-Item -Recurse -Force C:\temp\build",
+    "sfc /scannow",
+  ])("flags %s", (cmd) => {
+    expect(isRiskyCommand(cmd)).toBe(true);
+  });
+
+  it.each([
+    "pip install requests",
+    "npm install -g typescript",
+    "git pull --rebase origin main",
+    "git push origin main",
+    "docker ps",
+    "lsof -i :3000",
+    "kill 4821",
+    "systemctl status mysql",
+    "ls -ld /usr/local/lib/node_modules",
+    "python -m pip install pandas",
+    "kubectl get pods -n shop",
+    "npm install && npm ci",
+    "curl -I https://example.com",
+  ])("leaves %s alone", (cmd) => {
+    expect(isRiskyCommand(cmd)).toBe(false);
+  });
+
+  it("marks a risky command dangerous even if the model did not", async () => {
+    const { normalizeReply } = await import("../netlify/functions/analyse/analyse.mts");
+    const out = normalizeReply({ fix_steps: [{ step: "start it", command: "sudo systemctl start mysql", dangerous: false }] }) as any;
+    expect(out.fix_steps[0].dangerous).toBe(true);
   });
 });

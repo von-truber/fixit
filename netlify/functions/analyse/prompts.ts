@@ -22,7 +22,7 @@ Rules:
 - verdict: "healthy", "warnings" or "errors".
 - overview: one sentence, under 30 words; it is shown as the headline.
 - issues: at most 8, most severe first; title under 8 words; severity "error", "warning" or "info"; sample is one representative line.
-- A collapsed line stands for many lines that differed in URLs, ids or times; do not name one URL in the title as if it were the only one.
+- A collapsed line stands for many lines that differed in URLs, ids or times. When its note says "across N variants such as ...", the issue affects all of them: describe it generally (e.g. "requests timing out") and do not name only the first line's route.
 - next_steps: at most 5, short and concrete.
 - confidence: exactly "high", "medium" or "low".
 - first_seen: null when the log has no timestamp for the issue.

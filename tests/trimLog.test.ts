@@ -11,6 +11,12 @@ describe("signature", () => {
       signature("2026/11/08 09:20:41 [error] 1024#1024: *4469 connect() failed"),
     );
   });
+  it("ignores unquoted routes and file paths", () => {
+    expect(signature("ERROR GET /invoices/:id 500 5000ms Error: timeout (/app/node_modules/pg-pool/index.js:45:11)")).toBe(
+      signature("ERROR POST /payments 500 5000ms Error: timeout (/app/node_modules/pg-pool/index.js:45:11)"),
+    );
+  });
+
   it("keeps different messages apart", () => {
     expect(signature("connect() failed")).not.toBe(signature("upstream timed out"));
   });

@@ -1,0 +1,5 @@
+Warning: mysqli_real_connect(): (HY000/2002): Connection refused in /var/www/html/wp-includes/class-wpdb.php on line 1982
+
+Error establishing a database connection
+
+This either means that the username and password information in your wp-config.php file is incorrect or that contact with the database server at localhost could not be established. This could mean your host's database server is down.

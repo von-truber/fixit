@@ -8,7 +8,7 @@ Fixit turns terminal errors and log files into plain-language explanations and s
 
 ![Fixit's terminal-style page explaining an npm permission error as a quest: two of four fix steps ticked off, and a HAZARD badge on the sudo step](docs/screenshot.png)
 
-**Full breakdown:** [docs/OVERVIEW.md](docs/OVERVIEW.md) covers how it works, which files to look at, who it's for and why.
+**Full breakdown:** [docs/OVERVIEW.md](docs/OVERVIEW.md) covers how it works, which files to look at, who it's for and why. **Demo kit:** [demo/](demo/README.md) has a real-world example for every use case.
 
 Built for the hackathon theme **Simplify the Everyday**: everyone who uses a computer hits error messages written for machines. Fixit translates them for humans.
 
@@ -78,7 +78,7 @@ On Netlify, leave `ANTHROPIC_API_KEY` unset to use the AI Gateway, or set it as 
 ## Tests
 
 ```bash
-npm test                                             # 48 unit tests: redaction, trimming, the function
+npm test                                             # 81 unit tests: redaction, trimming, the function
 node scripts/smoke.mts https://fixit-errors.netlify.app          # live fixtures E1-E6 and D1-D3, with timings
 node scripts/smoke.mts https://fixit-errors.netlify.app --s3     # rate-limit test
 ```

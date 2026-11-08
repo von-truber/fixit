@@ -1,0 +1,5 @@
+(.venv) maya@laptop:~/projects/grades$ python analyze.py
+Traceback (most recent call last):
+  File "/home/maya/projects/grades/analyze.py", line 3, in <module>
+    import pandas as pd
+ModuleNotFoundError: No module named 'pandas'

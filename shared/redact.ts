@@ -35,6 +35,8 @@ const isPlaceholder = (s: string) => /^\[[A-Z_]+\]$/.test(s);
 const IPV4_OCTET = "(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)";
 
 function isIPv6(candidate: string): boolean {
+  // ":::3000" is the unspecified address "::" plus a port (Node's EADDRINUSE); keep it.
+  if (candidate.includes(":::")) return false;
   const groups = candidate.split(":");
   const nonEmpty = groups.filter(Boolean);
   if (!nonEmpty.every((g) => /^[0-9a-f]{1,4}$/i.test(g))) return false;

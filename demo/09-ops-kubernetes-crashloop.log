@@ -1,0 +1,64 @@
+$ kubectl get pods -n shop
+NAME                        READY   STATUS             RESTARTS        AGE
+checkout-6d8f7b9c4-x2lqp    0/1     CrashLoopBackOff   7 (2m11s ago)   14m
+cart-5c9b8d7f6-k8mzn        1/1     Running            0               3d
+
+$ kubectl describe pod checkout-6d8f7b9c4-x2lqp -n shop
+Name:         checkout-6d8f7b9c4-x2lqp
+Namespace:    shop
+Containers:
+  checkout:
+    Image:          registry.acme.io/shop/checkout:1.9.0
+    State:          Waiting
+      Reason:       CrashLoopBackOff
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    1
+    Ready:          False
+    Restart Count:  7
+    Liveness:       http-get http://:3000/healthz delay=10s timeout=1s period=10s
+Events:
+  Type     Reason     Age                 From               Message
+  ----     ------     ----                ----               -------
+  Normal   Scheduled  14m                 default-scheduler  Successfully assigned shop/checkout-6d8f7b9c4-x2lqp to node-pool-a-3
+  Normal   Pulled     14m                 kubelet            Successfully pulled image "registry.acme.io/shop/checkout:1.9.0" in 2.1s
+  Normal   Created    13m (x1 over 14m)  kubelet            Created container checkout
+  Normal   Started    13m (x1 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    12m (x3 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    11m (x2 over 14m)  kubelet            Created container checkout
+  Normal   Started    11m (x2 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    10m (x6 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    9m (x3 over 14m)  kubelet            Created container checkout
+  Normal   Started    9m (x3 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    8m (x9 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    7m (x4 over 14m)  kubelet            Created container checkout
+  Normal   Started    7m (x4 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    6m (x12 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    5m (x5 over 14m)  kubelet            Created container checkout
+  Normal   Started    5m (x5 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    4m (x15 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    3m (x6 over 14m)  kubelet            Created container checkout
+  Normal   Started    3m (x6 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    2m (x18 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+  Normal   Created    1m (x7 over 14m)  kubelet            Created container checkout
+  Normal   Started    1m (x7 over 14m)  kubelet            Started container checkout
+  Warning  BackOff    1m (x21 over 13m)  kubelet            Back-off restarting failed container checkout in pod checkout-6d8f7b9c4-x2lqp_shop
+
+$ kubectl logs checkout-6d8f7b9c4-x2lqp -n shop --previous
+> checkout@1.9.0 start
+> node dist/server.js
+
+node:internal/modules/cjs/loader:1228
+  throw err;
+  ^
+
+Error: Cannot find module '/app/dist/server.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:174:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.14.0
