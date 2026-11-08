@@ -1,0 +1,110 @@
+2026-11-08T10:02:11.000Z INFO  [worker] Starting report-worker v2.4.1 (node v20.11.1)
+2026-11-08T10:02:11.000Z INFO  [worker] Connected to redis at redis:6379
+2026-11-08T10:02:11.000Z INFO  [worker] Memory limit detected: 512MiB (cgroup)
+2026-11-08T10:02:19.000Z INFO  [worker] Processing job 9001: monthly-report customer=1001 rows=85307
+2026-11-08T10:02:29.000Z INFO  [worker] Processing job 9002: monthly-report customer=1002 rows=67007
+2026-11-08T10:02:37.000Z INFO  [worker] Processing job 9003: monthly-report customer=1003 rows=86401
+2026-11-08T10:02:37.000Z INFO  [worker] Job 9003 complete in 2.55s
+2026-11-08T10:02:47.000Z INFO  [worker] Processing job 9004: monthly-report customer=1004 rows=58272
+2026-11-08T10:02:55.000Z INFO  [worker] Processing job 9005: monthly-report customer=1005 rows=58763
+2026-11-08T10:03:03.000Z INFO  [worker] Processing job 9006: monthly-report customer=1006 rows=55537
+2026-11-08T10:03:03.000Z INFO  [worker] Job 9006 complete in 2.82s
+2026-11-08T10:03:12.000Z INFO  [worker] Processing job 9007: monthly-report customer=1007 rows=84977
+2026-11-08T10:03:19.000Z INFO  [worker] Processing job 9008: monthly-report customer=1008 rows=54800
+2026-11-08T10:03:28.000Z INFO  [worker] Processing job 9009: monthly-report customer=1009 rows=60838
+2026-11-08T10:03:28.000Z INFO  [worker] Job 9009 complete in 2.62s
+2026-11-08T10:03:36.000Z INFO  [worker] Processing job 9010: monthly-report customer=1010 rows=88749
+2026-11-08T10:03:44.000Z INFO  [worker] Processing job 9011: monthly-report customer=1011 rows=55286
+2026-11-08T10:03:52.000Z INFO  [worker] Processing job 9012: monthly-report customer=1012 rows=56133
+2026-11-08T10:03:52.000Z INFO  [worker] Job 9012 complete in 3.38s
+2026-11-08T10:03:59.000Z INFO  [worker] Processing job 9013: monthly-report customer=1013 rows=87706
+2026-11-08T10:04:09.000Z INFO  [worker] Processing job 9014: monthly-report customer=1014 rows=52981
+2026-11-08T10:04:17.000Z INFO  [worker] Processing job 9015: monthly-report customer=1015 rows=62142
+2026-11-08T10:04:17.000Z INFO  [worker] Job 9015 complete in 2.14s
+2026-11-08T10:04:27.000Z INFO  [worker] Processing job 9016: monthly-report customer=1016 rows=75656
+2026-11-08T10:04:35.000Z INFO  [worker] Processing job 9017: monthly-report customer=1017 rows=85355
+2026-11-08T10:04:42.000Z INFO  [worker] Processing job 9018: monthly-report customer=1018 rows=66460
+2026-11-08T10:04:42.000Z INFO  [worker] Job 9018 complete in 3.93s
+2026-11-08T10:04:49.000Z INFO  [worker] Processing job 9019: monthly-report customer=1019 rows=83965
+2026-11-08T10:04:57.000Z INFO  [worker] Processing job 9020: monthly-report customer=1020 rows=79855
+2026-11-08T10:05:07.000Z INFO  [worker] Processing job 9021: monthly-report customer=1021 rows=84506
+2026-11-08T10:05:07.000Z INFO  [worker] Job 9021 complete in 3.59s
+2026-11-08T10:05:14.000Z INFO  [worker] Processing job 9022: monthly-report customer=1022 rows=69626
+2026-11-08T10:05:22.000Z INFO  [worker] Processing job 9023: monthly-report customer=1023 rows=51210
+2026-11-08T10:05:33.000Z INFO  [worker] Processing job 9024: monthly-report customer=1024 rows=86373
+2026-11-08T10:05:33.000Z INFO  [worker] Job 9024 complete in 2.51s
+2026-11-08T10:05:41.000Z INFO  [worker] Processing job 9025: monthly-report customer=1025 rows=58066
+2026-11-08T10:05:48.000Z INFO  [worker] Processing job 9026: monthly-report customer=1026 rows=81604
+2026-11-08T10:05:55.000Z INFO  [worker] Processing job 9027: monthly-report customer=1027 rows=78572
+2026-11-08T10:05:55.000Z INFO  [worker] Job 9027 complete in 4.90s
+2026-11-08T10:05:55.000Z WARN  [worker] Heap usage high: 332MiB of 512MiB limit
+2026-11-08T10:06:02.000Z INFO  [worker] Processing job 9028: monthly-report customer=1028 rows=88504
+2026-11-08T10:06:02.000Z WARN  [worker] Heap usage high: 341MiB of 512MiB limit
+2026-11-08T10:06:13.000Z INFO  [worker] Processing job 9029: monthly-report customer=1029 rows=60952
+2026-11-08T10:06:13.000Z WARN  [worker] Heap usage high: 349MiB of 512MiB limit
+2026-11-08T10:06:24.000Z INFO  [worker] Processing job 9030: monthly-report customer=1030 rows=57945
+2026-11-08T10:06:24.000Z INFO  [worker] Job 9030 complete in 4.31s
+2026-11-08T10:06:24.000Z WARN  [worker] Heap usage high: 359MiB of 512MiB limit
+2026-11-08T10:06:32.000Z INFO  [worker] Processing job 9031: monthly-report customer=1031 rows=64451
+2026-11-08T10:06:32.000Z WARN  [worker] Heap usage high: 368MiB of 512MiB limit
+2026-11-08T10:06:41.000Z INFO  [worker] Processing job 9032: monthly-report customer=1032 rows=52816
+2026-11-08T10:06:41.000Z WARN  [worker] Heap usage high: 378MiB of 512MiB limit
+2026-11-08T10:06:51.000Z INFO  [worker] Processing job 9033: monthly-report customer=1033 rows=51471
+2026-11-08T10:06:51.000Z INFO  [worker] Job 9033 complete in 3.70s
+2026-11-08T10:06:51.000Z WARN  [worker] Heap usage high: 385MiB of 512MiB limit
+2026-11-08T10:06:58.000Z INFO  [worker] Processing job 9034: monthly-report customer=1034 rows=52773
+2026-11-08T10:06:58.000Z WARN  [worker] Heap usage high: 393MiB of 512MiB limit
+2026-11-08T10:07:05.000Z INFO  [worker] Processing job 9035: monthly-report customer=1035 rows=61090
+2026-11-08T10:07:05.000Z WARN  [worker] Heap usage high: 402MiB of 512MiB limit
+2026-11-08T10:07:15.000Z INFO  [worker] Processing job 9036: monthly-report customer=1036 rows=67878
+2026-11-08T10:07:15.000Z INFO  [worker] Job 9036 complete in 2.82s
+2026-11-08T10:07:15.000Z WARN  [worker] Heap usage high: 411MiB of 512MiB limit
+2026-11-08T10:07:24.000Z INFO  [worker] Processing job 9037: monthly-report customer=1037 rows=62100
+2026-11-08T10:07:24.000Z WARN  [worker] Heap usage high: 419MiB of 512MiB limit
+2026-11-08T10:07:33.000Z INFO  [worker] Processing job 9038: monthly-report customer=1038 rows=71236
+2026-11-08T10:07:33.000Z WARN  [worker] Heap usage high: 427MiB of 512MiB limit
+2026-11-08T10:07:33.000Z WARN  [worker] GC took 600ms; event loop lag 600ms
+2026-11-08T10:07:44.000Z INFO  [worker] Processing job 9039: monthly-report customer=1039 rows=74639
+2026-11-08T10:07:44.000Z INFO  [worker] Job 9039 complete in 3.75s
+2026-11-08T10:07:44.000Z WARN  [worker] Heap usage high: 435MiB of 512MiB limit
+2026-11-08T10:07:53.000Z INFO  [worker] Processing job 9040: monthly-report customer=1040 rows=56705
+2026-11-08T10:07:53.000Z WARN  [worker] Heap usage high: 442MiB of 512MiB limit
+2026-11-08T10:07:53.000Z WARN  [worker] GC took 1056ms; event loop lag 360ms
+2026-11-08T10:08:01.000Z INFO  [worker] Processing job 9041: monthly-report customer=1041 rows=71920
+2026-11-08T10:08:01.000Z WARN  [worker] Heap usage high: 449MiB of 512MiB limit
+2026-11-08T10:08:12.000Z INFO  [worker] Processing job 9042: monthly-report customer=1042 rows=58914
+2026-11-08T10:08:12.000Z INFO  [worker] Job 9042 complete in 3.82s
+2026-11-08T10:08:12.000Z WARN  [worker] Heap usage high: 457MiB of 512MiB limit
+2026-11-08T10:08:12.000Z WARN  [worker] GC took 1275ms; event loop lag 795ms
+2026-11-08T10:08:22.000Z INFO  [worker] Processing job 9043: monthly-report customer=1043 rows=84574
+2026-11-08T10:08:22.000Z WARN  [worker] Heap usage high: 464MiB of 512MiB limit
+2026-11-08T10:08:29.000Z INFO  [worker] Processing job 9044: monthly-report customer=1044 rows=53621
+2026-11-08T10:08:29.000Z WARN  [worker] Heap usage high: 473MiB of 512MiB limit
+2026-11-08T10:08:29.000Z WARN  [worker] GC took 476ms; event loop lag 491ms
+2026-11-08T10:08:36.000Z INFO  [worker] Processing job 9045: monthly-report customer=1045 rows=89435
+2026-11-08T10:08:36.000Z INFO  [worker] Job 9045 complete in 4.19s
+2026-11-08T10:08:36.000Z WARN  [worker] Heap usage high: 480MiB of 512MiB limit
+2026-11-08T10:08:46.000Z INFO  [worker] Processing job 9046: monthly-report customer=1046 rows=73956
+2026-11-08T10:08:46.000Z WARN  [worker] Heap usage high: 489MiB of 512MiB limit
+2026-11-08T10:08:46.000Z WARN  [worker] GC took 1043ms; event loop lag 700ms
+2026-11-08T10:08:54.000Z INFO  [worker] Processing job 9047: monthly-report customer=1047 rows=68592
+2026-11-08T10:08:54.000Z WARN  [worker] Heap usage high: 496MiB of 512MiB limit
+2026-11-08T10:09:03.000Z INFO  [worker] Processing job 9048: monthly-report customer=1048 rows=51997
+2026-11-08T10:09:03.000Z INFO  [worker] Job 9048 complete in 2.58s
+2026-11-08T10:09:03.000Z WARN  [worker] Heap usage high: 504MiB of 512MiB limit
+2026-11-08T10:09:03.000Z WARN  [worker] GC took 555ms; event loop lag 665ms
+2026-11-08T10:09:06.000Z ERROR [worker] Job 9049 failed: JavaScript heap out of memory
+
+<--- Last few GCs --->
+[1:0x6a3e0c0]   412387 ms: Mark-Compact 497.2 (510.6) -> 496.8 (511.1) MB, 1630.42 / 0.00 ms  (average mu = 0.081, current mu = 0.007) allocation failure;
+
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+ 1: 0xb8d0a3 node::OOMErrorHandler(char const*, v8::OOMDetails const&) [node]
+ 2: 0xf06250 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [node]
+
+$ docker inspect report-worker --format '{{.State.Status}} {{.State.OOMKilled}} {{.State.ExitCode}}'
+exited true 137
+$ docker ps -a --filter name=report-worker
+CONTAINER ID   IMAGE                  STATUS                       NAMES
+a1b2c3d4e5f6   acme/report-worker:2.4.1   Exited (137) 4 seconds ago   report-worker

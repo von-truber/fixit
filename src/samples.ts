@@ -1,4 +1,20 @@
 // One-click demo samples. Fixture IDs match the PRD's testing tables.
+import dockerOomLog from "../tests/fixtures/docker-oom.log?raw";
+import nginxErrorLog from "../tests/fixtures/nginx-error.log?raw";
+import systemdCleanLog from "../tests/fixtures/systemd-clean.log?raw";
+
+export interface DigestSample {
+  id: string;
+  label: string;
+  fileName: string;
+  input: string;
+}
+
+export const DIGEST_SAMPLES: DigestSample[] = [
+  { id: "D1", label: "Nginx: upstream errors", fileName: "nginx-error.log", input: nginxErrorLog },
+  { id: "D2", label: "Docker: container OOM", fileName: "docker-oom.log", input: dockerOomLog },
+  { id: "D3", label: "systemd: healthy", fileName: "systemd-clean.log", input: systemdCleanLog },
+];
 
 export interface ExplainSample {
   id: string;

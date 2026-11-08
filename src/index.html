@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fixit</title>
-    <meta name="description" content="Paste an error. Get a fix. Plain-language explanations and fixes for terminal errors." />
+    <meta name="description" content="Paste an error. Get a fix. Plain-language explanations and fixes for terminal errors and log files." />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -17,65 +17,83 @@
         <a class="repo-link" href="https://github.com/von-truber/fixit" rel="noopener">GitHub</a>
       </header>
 
-      <section class="card input-card" aria-labelledby="input-label">
-        <div class="samples" role="group" aria-label="Try a sample">
-          <span class="samples-label">Try a sample:</span>
-          <div id="sample-buttons" class="sample-buttons"></div>
-        </div>
-
-        <div class="field">
-          <div class="label-row">
-            <label id="input-label" for="input">Your error message</label>
-            <span id="char-count" class="char-count" aria-live="polite"></span>
-          </div>
-          <textarea id="input" rows="10" spellcheck="false" autocomplete="off"
-            placeholder="Paste an error message, stack trace or command output"></textarea>
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="environment">Environment</label>
-            <select id="environment">
-              <option value="auto">Auto-detect</option>
-              <option value="linux">Linux</option>
-              <option value="macos">macOS</option>
-              <option value="windows">Windows</option>
-              <option value="python">Python</option>
-              <option value="node">Node.js</option>
-              <option value="docker">Docker</option>
-              <option value="git">Git</option>
-              <option value="wordpress">WordPress or PHP</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="field grow">
-            <label for="context">What were you trying to do? <span class="optional">(optional)</span></label>
-            <input id="context" type="text" maxlength="300" autocomplete="off" placeholder="e.g. Installing a package globally" />
-          </div>
-        </div>
-      </section>
-
-      <section class="privacy" aria-label="Privacy">
-        <p class="privacy-line">
-          <span class="shield" aria-hidden="true">🛡</span>
-          <span>Secrets removed: <strong id="redact-count">0</strong></span>
-          <span id="redact-kinds" class="redact-kinds"></span>
-        </p>
-        <details id="preview">
-          <summary>Preview what will be sent</summary>
-          <pre id="preview-text" class="preview-text"></pre>
-        </details>
-      </section>
-
-      <div class="actions">
-        <button id="analyse" class="primary" type="button" disabled>
-          <span class="spinner" aria-hidden="true"></span>
-          <span class="button-label">Analyse</span>
-        </button>
-        <p id="status" class="status" role="status"></p>
+      <div class="tabs" role="tablist" aria-label="Mode">
+        <button id="tab-explain" class="tab" role="tab" type="button" aria-selected="true" aria-controls="panel" data-mode="explain">Explain Error</button>
+        <button id="tab-digest" class="tab" role="tab" type="button" aria-selected="false" aria-controls="panel" data-mode="digest" tabindex="-1">Log Digest</button>
       </div>
 
-      <div id="result" class="result" aria-live="polite" aria-busy="false"></div>
+      <div id="panel" role="tabpanel" aria-labelledby="tab-explain">
+        <section class="card input-card" id="input-card">
+          <div class="samples" role="group" aria-label="Try a sample">
+            <span class="samples-label">Try a sample:</span>
+            <div id="sample-buttons" class="sample-buttons"></div>
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label id="input-label" for="input">Your error message</label>
+              <span id="char-count" class="char-count" aria-live="polite"></span>
+            </div>
+            <textarea id="input" rows="10" spellcheck="false" autocomplete="off"></textarea>
+          </div>
+
+          <div id="drop-zone" class="drop-zone" hidden>
+            <p>
+              <span aria-hidden="true">📄</span>
+              Drop a <code>.log</code> or <code>.txt</code> file here (up to 1 MB), or
+              <label class="file-label" for="file-input">choose a file</label>
+              <input id="file-input" type="file" accept=".log,.txt,text/plain" class="visually-hidden" />
+            </p>
+            <p id="file-name" class="file-name"></p>
+          </div>
+
+          <div id="explain-fields" class="field-row">
+            <div class="field">
+              <label for="environment">Environment</label>
+              <select id="environment">
+                <option value="auto">Auto-detect</option>
+                <option value="linux">Linux</option>
+                <option value="macos">macOS</option>
+                <option value="windows">Windows</option>
+                <option value="python">Python</option>
+                <option value="node">Node.js</option>
+                <option value="docker">Docker</option>
+                <option value="git">Git</option>
+                <option value="wordpress">WordPress or PHP</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="field grow">
+              <label for="context">What were you trying to do? <span class="optional">(optional)</span></label>
+              <input id="context" type="text" maxlength="300" autocomplete="off" placeholder="e.g. Installing a package globally" />
+            </div>
+          </div>
+        </section>
+
+        <section class="privacy" aria-label="Privacy">
+          <p class="privacy-line">
+            <span class="shield" aria-hidden="true">🛡</span>
+            <span>Secrets removed: <strong id="redact-count">0</strong></span>
+            <span id="redact-kinds" class="redact-kinds"></span>
+          </p>
+          <p id="trim-line" class="trim-line" hidden></p>
+          <details id="preview">
+            <summary>Preview what will be sent</summary>
+            <pre id="preview-text" class="preview-text"></pre>
+          </details>
+        </section>
+
+        <div class="actions">
+          <button id="analyse" class="primary" type="button" disabled>
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="button-label">Analyse</span>
+          </button>
+          <p id="status" class="status" role="status"></p>
+        </div>
+
+        <div id="result-explain" class="result" aria-live="polite" aria-busy="false"></div>
+        <div id="result-digest" class="result" aria-live="polite" aria-busy="false" hidden></div>
+      </div>
 
       <footer class="site-footer">
         <p>Suggestions may be wrong. Check any command that deletes data, changes permissions or uses sudo before running it.</p>

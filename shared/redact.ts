@@ -94,12 +94,13 @@ const RULES: Rule[] = [
   {
     kind: "ip",
     pattern: new RegExp(`(?<![\\w.])${IPV4_OCTET}(?:\\.${IPV4_OCTET}){3}(?![\\w.])`, "g"),
-    replace: () => "[IP]",
+    // Loopback and wildcard addresses identify no one and help diagnosis.
+    replace: (m) => (/^(?:127\.|0\.0\.0\.0$)/.test(m) ? null : "[IP]"),
   },
   {
     kind: "ip",
     pattern: /(?<![\w:])(?:[0-9a-f]{0,4}:){2,8}[0-9a-f]{0,4}(?![\w:])/gi,
-    replace: (m) => (isIPv6(m) ? "[IP]" : null),
+    replace: (m) => (isIPv6(m) && m !== "::1" && m !== "::" ? "[IP]" : null),
   },
   {
     // /home/michael/ , /Users/michael/ , C:\Users\Michael\ , C:/Users/Michael/

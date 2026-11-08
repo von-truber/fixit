@@ -20,7 +20,9 @@ Rules:
 - issues: at most 8, most severe first; sample is one representative line.
 - first_seen: null when the log has no timestamp for the issue.
 - root_cause: one or two sentences; say "unclear from this excerpt" when it is.
-- Note that the log may be trimmed; do not assume missing lines.`;
+- Note that the log may be trimmed; do not assume missing lines.
+- Repeated lines are collapsed into one line ending in "[N occurrences in total including this one, ...]"; use N as the count.
+- Lines were left out only where a "... [N lines omitted] ..." marker appears; mention trimming only if you see one.`;
 
 export const MAX_TOKENS: Record<Mode, number> = {
   explain: 1200,
